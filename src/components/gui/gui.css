@@ -229,6 +229,7 @@
 }
 
 .extension-button-container {
+    display: none;
     width: 3.75rem;
     height: 3.25rem;
     position: absolute;
@@ -245,6 +246,7 @@
 $fade-out-distance: 15px;
 
 .extension-button-container:before {
+    display: none;
     content: "";
     position: absolute;
     top: calc(calc(-1 * $fade-out-distance) - 1px);
@@ -256,6 +258,7 @@ $fade-out-distance: 15px;
 
 
 .extension-button {
+    display: none;
     background: none;
     border: none;
     outline: none;

@@ -4,6 +4,8 @@
 .backpack-container {
     flex-shrink: 1;
     position: relative;
+    /* Add display none */
+    display: none;
 }
 
 .backpack-header {

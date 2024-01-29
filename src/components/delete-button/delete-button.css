@@ -3,7 +3,7 @@
 
 /* wrapper to allow for touch slop if we decide to add it */
 .delete-button {
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     user-select: none;
@@ -12,7 +12,7 @@
 }
 
 .delete-button-visible {
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   overflow: hidden;  /* Mask the icon animation */

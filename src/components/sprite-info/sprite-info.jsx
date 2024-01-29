@@ -93,7 +93,7 @@ class SpriteInfo extends React.Component {
                         [styles.columnInput]: labelAbove
                     }
                 )}
-                disabled={this.props.disabled}
+                disabled="true"
                 placeholder={this.props.intl.formatMessage(messages.spritePlaceholder)}
                 tabIndex="0"
                 type="text"

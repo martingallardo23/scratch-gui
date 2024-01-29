@@ -24,6 +24,7 @@ import AuthorInfo from './author-info.jsx';
 import AccountNav from '../../containers/account-nav.jsx';
 import LoginDropdown from './login-dropdown.jsx';
 import SB3Downloader from '../../containers/sb3-downloader.jsx';
+import SB3DatabaseSaver from '../../containers/sb3-database-saver.jsx';
 import DeletionRestorer from '../../containers/deletion-restorer.jsx';
 import TurboMode from '../../containers/turbo-mode.jsx';
 import MenuBarHOC from '../../containers/menu-bar-hoc.jsx';
@@ -92,7 +93,6 @@ import prehistoricLogo from './prehistoric-logo.svg';
 import oldtimeyLogo from './oldtimey-logo.svg';
 
 import sharedMessages from '../../lib/shared-messages';
-
 const ariaMessages = defineMessages({
     tutorials: {
         id: 'gui.menuBar.tutorialsLibrary',
@@ -175,6 +175,8 @@ class MenuBar extends React.Component {
             'handleClickNew',
             'handleClickRemix',
             'handleClickSave',
+            'handleClickSaveToDatabase',
+            'handleLoadProjectFromDatabase',
             'handleClickSaveAsCopy',
             'handleClickSeeCommunity',
             'handleClickShare',
@@ -187,6 +189,8 @@ class MenuBar extends React.Component {
     }
     componentDidMount () {
         document.addEventListener('keydown', this.handleKeyPress);
+        window.handleClickSaveToDatabase = this.handleClickSaveToDatabase.bind(this);
+        window.handleLoadProjectFromDatabase = this.handleLoadProjectFromDatabase;
     }
     componentWillUnmount () {
         document.removeEventListener('keydown', this.handleKeyPress);
@@ -292,6 +296,17 @@ class MenuBar extends React.Component {
             }
         };
     }
+    getSaveToDatabaseHandler () {
+        return () => {
+            this.handleClickSaveToDatabase();
+        };
+    }
+    
+    handleLanguageMouseUp (e) {
+        if (!this.props.languageMenuOpen) {
+            this.props.onClickLanguage(e);
+        }
+    }
     restoreOptionMessage (deletedItem) {
         switch (deletedItem) {
         case 'Sprite':
@@ -371,6 +386,66 @@ class MenuBar extends React.Component {
             this.props.onRequestCloseAbout();
         };
     }
+
+    handleClickSaveToDatabase(action) {
+        this.props.vm.saveProjectSb3().then(content => {
+            const formData = new FormData();
+            formData.append('project', new Blob([content], {type: 'application/octet-stream'}));
+            formData.append('action', action); 
+    
+            fetch('https://learningbyteaming.herokuapp.com/save_project/', {
+                method: 'POST',
+                body: formData,
+                credentials: 'include',
+                mode: 'cors',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                withCredentials: true
+            }).then(response => {
+                console.log('Response status:', response.status);
+                return response.text().then(text => {
+                    console.log('Raw response text:', text);
+                    return JSON.parse(text);
+                });                
+            }).then(data => {
+                console.log('Server message:', data.message);
+                if (data.status === 'success') {
+                    console.log('Project saved successfully, from menubar');
+                    window.parent.postMessage({ command: 'projectSaved',
+                action: action }, 'https://learningbyteaming.herokuapp.com');
+                } else {
+                    console.error('Failed to save project');
+                }
+            }).catch(error => {
+                console.error('Error saving project:', error);
+            });
+        });
+    }
+    handleLoadProjectFromDatabase(userId, taskId, saved) {
+
+        if (saved) {
+            var url = `https://learningbyteaming.s3.amazonaws.com/projects/user_${userId}/project_${taskId}.sb3?${Date.now()}`;
+        } else {
+            var url = `https://learningbyteaming.s3.amazonaws.com/task_files/templates/template_${taskId}.sb3`;
+        }
+        
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.arrayBuffer();
+            })
+            .then(projectData => {
+                this.props.vm.loadProject(projectData);
+            })
+            .catch(e => {
+                console.error('Failed to load project', e);
+            });
+    }    
+    
     render () {
         const saveNowMessage = (
             <FormattedMessage
@@ -511,6 +586,21 @@ class MenuBar extends React.Component {
                                                 />
                                             </MenuItem>
                                         )}</SB3Downloader>
+                                        <div className={styles.menuBarItem}>
+                                            <SB3DatabaseSaver>{(className, saveProjectCallback) => (
+                                                <MenuItem
+                                                    id="save_to_database"
+                                                    className={className}
+                                                    onClick={this.getSaveToDatabaseHandler(saveProjectCallback)}
+                                                >
+                                                    <FormattedMessage
+                                                        defaultMessage="Save to database"
+                                                        description="Menu bar item for saving a project to the database"
+                                                        id="gui.menuBar.saveToDatabase"
+                                                    />
+                                                </MenuItem>
+                                            )}</SB3DatabaseSaver>
+                                        </div>
                                     </MenuSection>
                                 </MenuBarMenu>
                             </div>
@@ -907,8 +997,7 @@ MenuBar.propTypes = {
     onRequestCloseFile: PropTypes.func,
     onRequestCloseLogin: PropTypes.func,
     onRequestCloseMode: PropTypes.func,
-    onRequestCloseSettings: PropTypes.func,
-    onRequestOpenAbout: PropTypes.func,
+    onSaveProject: PropTypes.func,
     onSeeCommunity: PropTypes.func,
     onSetTimeTravelMode: PropTypes.func,
     onShare: PropTypes.func,
@@ -927,6 +1016,7 @@ MenuBar.propTypes = {
 
 MenuBar.defaultProps = {
     logo: scratchLogo,
+    onSaveProject: () => Promise.resolve(),
     onShare: () => {}
 };
 

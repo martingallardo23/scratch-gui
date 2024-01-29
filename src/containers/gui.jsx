@@ -73,6 +73,26 @@ class GUI extends React.Component {
             this.props.onProjectLoaded();
         }
     }
+    handleSaveToDatabase() {
+        this.props.vm.saveProjectSb3().then(content => {
+            const formData = new FormData();
+            formData.append('project', new Blob([content], {type: 'application/octet-stream'}));
+
+            fetch('https://learningbyteaming.herokuapp.com/save_project/', {
+                method: 'POST',
+                body: formData,
+                credentials: 'include',
+            }).then(response => {
+                if (response.ok) {
+                    console.log('Project saved successfully, from gui');
+                } else {
+                    console.error('Failed to save project');
+                }
+            }).catch(error => {
+                console.error('Error saving project:', error);
+            });
+        });
+    }
     render () {
         if (this.props.isError) {
             throw new Error(
