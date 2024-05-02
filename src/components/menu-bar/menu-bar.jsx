@@ -101,6 +101,8 @@ const ariaMessages = defineMessages({
     }
 });
 
+const WebsiteURL = 'https://lksy-ea03bd92899e.herokuapp.com';
+
 const MenuBarItemTooltip = ({
     children,
     className,
@@ -393,7 +395,7 @@ class MenuBar extends React.Component {
             formData.append('project', new Blob([content], {type: 'application/octet-stream'}));
             formData.append('action', action); 
     
-            fetch('https://learningbyteaming.herokuapp.com/save_project/', {
+            fetch(WebsiteURL + '/save_project/', {
                 method: 'POST',
                 body: formData,
                 credentials: 'include',
@@ -414,7 +416,7 @@ class MenuBar extends React.Component {
                 if (data.status === 'success') {
                     console.log('Project saved successfully, from menubar');
                     window.parent.postMessage({ command: 'projectSaved',
-                action: action }, 'https://learningbyteaming.herokuapp.com');
+                action: action }, WebsiteURL);
                 } else {
                     console.error('Failed to save project');
                 }

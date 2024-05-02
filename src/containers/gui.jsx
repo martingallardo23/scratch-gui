@@ -42,6 +42,7 @@ import GUIComponent from '../components/gui/gui.jsx';
 import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
 
 const {RequestMetadata, setMetadata, unsetMetadata} = storage.scratchFetch;
+const WebsiteURL = 'https://lksy-ea03bd92899e.herokuapp.com';
 
 const setProjectIdMetadata = projectId => {
     // If project ID is '0' or zero, it's not a real project ID. In that case, remove the project ID metadata.
@@ -78,7 +79,7 @@ class GUI extends React.Component {
             const formData = new FormData();
             formData.append('project', new Blob([content], {type: 'application/octet-stream'}));
 
-            fetch('https://learningbyteaming.herokuapp.com/save_project/', {
+            fetch(WebsiteURL + "/save_project/", {
                 method: 'POST',
                 body: formData,
                 credentials: 'include',
