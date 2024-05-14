@@ -1,12 +1,11 @@
-import classNames from 'classnames';
-import PropTypes from 'prop-types';
 import React from 'react';
-
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import { ContextMenuTrigger } from 'react-contextmenu';
+import { ContextMenu, MenuItem, DangerousMenuItem } from '../context-menu/context-menu.jsx';
+import { FormattedMessage } from 'react-intl';
 import DeleteButton from '../delete-button/delete-button.jsx';
 import styles from './sprite-selector-item.css';
-import {ContextMenuTrigger} from 'react-contextmenu';
-import {DangerousMenuItem, ContextMenu, MenuItem} from '../context-menu/context-menu.jsx';
-import {FormattedMessage} from 'react-intl';
 
 // react-contextmenu requires unique id to match trigger and context menu
 let contextMenuId = 0;
@@ -47,7 +46,7 @@ const SpriteSelectorItem = props => (
                 <div className={styles.spriteDetails}>{props.details}</div>
             ) : null}
         </div>
-        {(props.selected && props.onDeleteButtonClick) ? (
+        {(props.selected && props.onDeleteButtonClick && props.name !== 'Sprite1') ? (
             <DeleteButton
                 className={styles.deleteButton}
                 onClick={props.onDeleteButtonClick}

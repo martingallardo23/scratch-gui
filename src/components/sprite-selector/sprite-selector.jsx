@@ -22,21 +22,6 @@ const messages = defineMessages({
         id: 'gui.spriteSelector.addSpriteFromLibrary',
         description: 'Button to add a sprite in the target pane from library',
         defaultMessage: 'Choose a Sprite'
-    },
-    addSpriteFromPaint: {
-        id: 'gui.spriteSelector.addSpriteFromPaint',
-        description: 'Button to add a sprite in the target pane from paint',
-        defaultMessage: 'Paint'
-    },
-    addSpriteFromSurprise: {
-        id: 'gui.spriteSelector.addSpriteFromSurprise',
-        description: 'Button to add a random sprite in the target pane',
-        defaultMessage: 'Surprise'
-    },
-    addSpriteFromFile: {
-        id: 'gui.spriteSelector.addSpriteFromFile',
-        description: 'Button to add a sprite in the target pane from file',
-        defaultMessage: 'Upload Sprite'
     }
 });
 
@@ -117,22 +102,6 @@ const SpriteSelectorComponent = function (props) {
                 img={spriteIcon}
                 moreButtons={[
                     {
-                        title: intl.formatMessage(messages.addSpriteFromFile),
-                        img: fileUploadIcon,
-                        onClick: onFileUploadClick,
-                        fileAccept: '.svg, .png, .bmp, .jpg, .jpeg, .sprite2, .sprite3, .gif',
-                        fileChange: onSpriteUpload,
-                        fileInput: spriteFileInput,
-                        fileMultiple: true
-                    }, {
-                        title: intl.formatMessage(messages.addSpriteFromSurprise),
-                        img: surpriseIcon,
-                        onClick: onSurpriseSpriteClick // TODO need real function for this
-                    }, {
-                        title: intl.formatMessage(messages.addSpriteFromPaint),
-                        img: paintIcon,
-                        onClick: onPaintSpriteClick // TODO need real function for this
-                    }, {
                         title: intl.formatMessage(messages.addSpriteFromLibrary),
                         img: searchIcon,
                         onClick: onNewSpriteClick

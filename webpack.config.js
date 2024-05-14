@@ -1,6 +1,7 @@
 const defaultsDeep = require('lodash.defaultsdeep');
 const path = require('path');
 const webpack = require('webpack');
+const dotenv = require('dotenv');
 
 // Plugins
 const CopyWebpackPlugin = require('copy-webpack-plugin');
